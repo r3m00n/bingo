@@ -20,6 +20,28 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Park Bingo by R3m00n',
   description: 'Daily changing bingo game to make your park visits more fun!',
+  openGraph: {
+    title: 'Park Bingo by R3m00n',
+    description: 'Daily changing bingo game to make your park visits more fun!',
+    url: 'https://bingo.merlin.hamburg',
+    siteName: 'Park Bingo',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Park Bingo Preview',
+      },
+    ],
+    locale: 'de_DE',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Park Bingo by R3m00n',
+    description: 'Daily changing bingo game to make your park visits more fun!',
+    images: ['/og-image.png'],
+  },
 };
 
 export default function RootLayout({
