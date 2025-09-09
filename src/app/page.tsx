@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Loader2, Plus, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { sendSuggestion } from '@/actions/send-suggestion';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -12,7 +14,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { sendSuggestion } from '@/actions/send-suggestion';
 
 const BINGO_ITEMS = [
   'Drink water',
@@ -216,8 +217,8 @@ export default function ParkBingo() {
     const isAnimating = animatingCells.has(index);
 
     return `
-      aspect-square flex items-center justify-center p-2 rounded-lg border-2 
-      transition-all duration-300 cursor-pointer select-none text-center text-sm font-medium
+      aspect-square flex items-center justify-center p-1.5 rounded-lg border-2 
+      transition-all duration-300 cursor-pointer select-none text-center text-xs font-medium
       ${
         isChecked
           ? 'bg-primary text-primary-foreground border-primary shadow-lg'
@@ -232,16 +233,16 @@ export default function ParkBingo() {
   const hasCelebratingLines = celebratingLines.size > 0;
 
   return (
-    <div className='min-h-screen bg-background p-4'>
-      <div className='max-w-md mx-auto'>
+    <div className="bg-background min-h-screen p-4">
+      <div className="mx-auto max-w-md">
         {/* Header */}
-        <div className='text-center mb-6'>
-          <h1 className='text-3xl font-bold text-foreground mb-2'>(Hammer) Park Bingo</h1>
-          <p className='text-muted-foreground'>Spiel vom {formattedDate}</p>
+        <div className="mb-6 text-center">
+          <h1 className="text-foreground mb-2 text-3xl font-bold">(Hammer) Park Bingo</h1>
+          <p className="text-muted-foreground">Spiel vom {formattedDate}</p>
           {bingoState.completedLines.length > 0 && (
-            <div className='mt-2 flex items-center justify-center gap-1 text-primary'>
-              <Sparkles className='w-4 h-4' />
-              <span className='text-sm font-medium'>
+            <div className="text-primary mt-2 flex items-center justify-center gap-1">
+              <Sparkles className="h-4 w-4" />
+              <span className="text-sm font-medium">
                 {bingoState.completedLines.length} Bingo
                 {bingoState.completedLines.length > 1 ? 's' : ''}!
               </span>
@@ -251,9 +252,10 @@ export default function ParkBingo() {
 
         {/* Bingo Grid */}
         <div
-          className={`grid grid-cols-5 gap-2 mb-6 transition-all duration-500 ${
-            hasCelebratingLines ? 'animate-pulse scale-105 shadow-2xl' : ''
-          }`}>
+          className={`mb-6 grid grid-cols-5 gap-2 transition-all duration-500 ${
+            hasCelebratingLines ? 'scale-105 animate-pulse shadow-2xl' : ''
+          }`}
+        >
           {bingoState.grid.map((item, index) => (
             <button
               key={index}
@@ -261,8 +263,11 @@ export default function ParkBingo() {
               className={getCellClasses(index)}
               aria-label={`${item} - ${
                 bingoState.checked[index] ? 'abgeschlossen' : 'nicht abgeschlossen'
-              }`}>
-              <span className='text-balance leading-tight'>{item}</span>
+              }`}
+            >
+              <span className="leading-tight text-balance break-words hyphens-auto">
+                {item}
+              </span>
             </button>
           ))}
         </div>
@@ -270,12 +275,12 @@ export default function ParkBingo() {
         {/* Suggest Button */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
-            <Button variant='outline' className='w-full bg-transparent' size='lg'>
-              <Plus className='w-4 h-4 mr-2' />
+            <Button variant="outline" className="w-full bg-transparent" size="lg">
+              <Plus className="mr-2 h-4 w-4" />
               Neues Feld vorschlagen
             </Button>
           </DialogTrigger>
-          <DialogContent className='mx-4'>
+          <DialogContent className="mx-4">
             <DialogHeader>
               <DialogTitle>Schlage ein neues Feld vor</DialogTitle>
             </DialogHeader>
@@ -292,7 +297,8 @@ export default function ParkBingo() {
                   setIsLoading(false);
                 }
               }}
-              className='space-y-4'>
+              className="space-y-4"
+            >
               <div>
                 <Input
                   placeholder="Feld Inhalt (z.B. 'Flugzeug')"
@@ -302,20 +308,22 @@ export default function ParkBingo() {
                   disabled={isLoading}
                 />
               </div>
-              <div className='flex gap-2'>
+              <div className="flex gap-2">
                 <Button
-                  variant='outline'
-                  type='button'
+                  variant="outline"
+                  type="button"
                   onClick={() => setIsModalOpen(false)}
                   disabled={isLoading}
-                  className='flex-1'>
+                  className="flex-1"
+                >
                   Abbrechen
                 </Button>
                 <Button
-                  type='submit'
+                  type="submit"
                   disabled={!suggestion.trim() || isLoading}
-                  className='flex-1'>
-                  {isLoading ? <Loader2 className='w-4 h-4 animate-spin mr-2' /> : null}
+                  className="flex-1"
+                >
+                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   {isLoading ? 'Senden...' : 'Senden'}
                 </Button>
               </div>
@@ -325,26 +333,27 @@ export default function ParkBingo() {
 
         {/* Reset Button */}
         <Button
-          variant='outline'
-          className={`w-full mt-3 transition-all duration-200 ${
+          variant="outline"
+          className={`mt-3 w-full transition-all duration-200 ${
             bingoState.checked.every(checked => !checked)
-              ? 'border-red-200 text-red-300 hover:border-red-200 hover:text-red-300 cursor-not-allowed'
-              : 'border-red-500 text-red-500 hover:border-red-600 hover:text-red-600 hover:bg-red-50'
+              ? 'cursor-not-allowed border-red-200 text-red-300 hover:border-red-200 hover:text-red-300'
+              : 'border-red-500 text-red-500 hover:border-red-600 hover:bg-red-50 hover:text-red-600'
           }`}
-          size='lg'
+          size="lg"
           onClick={handleReset}
-          disabled={bingoState.checked.every(checked => !checked)}>
+          disabled={bingoState.checked.every(checked => !checked)}
+        >
           Zurücksetzen
         </Button>
 
         {/* Progress indicator */}
-        <div className='mt-6 text-center'>
-          <div className='text-sm text-muted-foreground'>
+        <div className="mt-6 text-center">
+          <div className="text-muted-foreground text-sm">
             Fortschritt: {bingoState.checked.filter(Boolean).length}/25 abgeschlossen
           </div>
-          <div className='w-full bg-muted rounded-full h-2 mt-2'>
+          <div className="bg-muted mt-2 h-2 w-full rounded-full">
             <div
-              className='bg-primary h-2 rounded-full transition-all duration-500'
+              className="bg-primary h-2 rounded-full transition-all duration-500"
               style={{
                 width: `${(bingoState.checked.filter(Boolean).length / 25) * 100}%`,
               }}
