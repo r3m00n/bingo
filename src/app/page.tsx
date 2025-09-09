@@ -48,7 +48,7 @@ const BINGO_ITEMS = [
   'Flugzeug',
   'Hängematte',
   'Schachspieler',
-  'Händchenhalter'
+  'Händchenhalter',
   'Banksitzer',
   'Fotograf',
 ];
@@ -71,8 +71,8 @@ export default function ParkBingo() {
   const [suggestion, setSuggestion] = useState('');
   const [animatingCells, setAnimatingCells] = useState<Set<number>>(new Set());
   const [celebratingLines, setCelebratingLines] = useState<Set<number>>(new Set());
-  const [formattedDate, setFormattedDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [formattedDate, setFormattedDate] = useState('');
 
   useEffect(() => {
     const today = new Date().toLocaleDateString('de-DE', {
@@ -209,6 +209,7 @@ export default function ParkBingo() {
     };
 
     setBingoState(newState);
+    localStorage.setItem('park-bingo', JSON.stringify(newState));
   };
 
   // Get cell classes for styling
@@ -233,16 +234,16 @@ export default function ParkBingo() {
   const hasCelebratingLines = celebratingLines.size > 0;
 
   return (
-    <div className="bg-background min-h-screen p-4">
-      <div className="mx-auto max-w-md">
+    <div className='bg-background min-h-screen p-4'>
+      <div className='mx-auto max-w-md'>
         {/* Header */}
-        <div className="mb-6 text-center">
-          <h1 className="text-foreground mb-2 text-3xl font-bold">(Hammer) Park Bingo</h1>
-          <p className="text-muted-foreground">Spiel vom {formattedDate}</p>
+        <div className='mb-6 text-center'>
+          <h1 className='text-foreground mb-2 text-3xl font-bold'>(Hammer) Park Bingo</h1>
+          <p className='text-muted-foreground'>Spiel vom {formattedDate}</p>
           {bingoState.completedLines.length > 0 && (
-            <div className="text-primary mt-2 flex items-center justify-center gap-1">
-              <Sparkles className="h-4 w-4" />
-              <span className="text-sm font-medium">
+            <div className='text-primary mt-2 flex items-center justify-center gap-1'>
+              <Sparkles className='h-4 w-4' />
+              <span className='text-sm font-medium'>
                 {bingoState.completedLines.length} Bingo
                 {bingoState.completedLines.length > 1 ? 's' : ''}!
               </span>
@@ -265,7 +266,7 @@ export default function ParkBingo() {
                 bingoState.checked[index] ? 'abgeschlossen' : 'nicht abgeschlossen'
               }`}
             >
-              <span className="leading-tight text-balance break-words hyphens-auto">
+              <span className='leading-tight text-balance break-words hyphens-auto'>
                 {item}
               </span>
             </button>
@@ -275,12 +276,12 @@ export default function ParkBingo() {
         {/* Suggest Button */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" className="w-full bg-transparent" size="lg">
-              <Plus className="mr-2 h-4 w-4" />
+            <Button variant='outline' className='w-full bg-transparent' size='lg'>
+              <Plus className='mr-2 h-4 w-4' />
               Neues Feld vorschlagen
             </Button>
           </DialogTrigger>
-          <DialogContent className="mx-4">
+          <DialogContent className='mx-4'>
             <DialogHeader>
               <DialogTitle>Schlage ein neues Feld vor</DialogTitle>
             </DialogHeader>
@@ -297,7 +298,7 @@ export default function ParkBingo() {
                   setIsLoading(false);
                 }
               }}
-              className="space-y-4"
+              className='space-y-4'
             >
               <div>
                 <Input
@@ -308,22 +309,22 @@ export default function ParkBingo() {
                   disabled={isLoading}
                 />
               </div>
-              <div className="flex gap-2">
+              <div className='flex gap-2'>
                 <Button
-                  variant="outline"
-                  type="button"
+                  variant='outline'
+                  type='button'
                   onClick={() => setIsModalOpen(false)}
                   disabled={isLoading}
-                  className="flex-1"
+                  className='flex-1'
                 >
                   Abbrechen
                 </Button>
                 <Button
-                  type="submit"
+                  type='submit'
                   disabled={!suggestion.trim() || isLoading}
-                  className="flex-1"
+                  className='flex-1'
                 >
-                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  {isLoading ? <Loader2 className='mr-2 h-4 w-4 animate-spin' /> : null}
                   {isLoading ? 'Senden...' : 'Senden'}
                 </Button>
               </div>
@@ -333,13 +334,13 @@ export default function ParkBingo() {
 
         {/* Reset Button */}
         <Button
-          variant="outline"
+          variant='outline'
           className={`mt-3 w-full transition-all duration-200 ${
             bingoState.checked.every(checked => !checked)
               ? 'cursor-not-allowed border-red-200 text-red-300 hover:border-red-200 hover:text-red-300'
               : 'border-red-500 text-red-500 hover:border-red-600 hover:bg-red-50 hover:text-red-600'
           }`}
-          size="lg"
+          size='lg'
           onClick={handleReset}
           disabled={bingoState.checked.every(checked => !checked)}
         >
@@ -347,13 +348,13 @@ export default function ParkBingo() {
         </Button>
 
         {/* Progress indicator */}
-        <div className="mt-6 text-center">
-          <div className="text-muted-foreground text-sm">
+        <div className='mt-6 text-center'>
+          <div className='text-muted-foreground text-sm'>
             Fortschritt: {bingoState.checked.filter(Boolean).length}/25 abgeschlossen
           </div>
-          <div className="bg-muted mt-2 h-2 w-full rounded-full">
+          <div className='bg-muted mt-2 h-2 w-full rounded-full'>
             <div
-              className="bg-primary h-2 rounded-full transition-all duration-500"
+              className='bg-primary h-2 rounded-full transition-all duration-500'
               style={{
                 width: `${(bingoState.checked.filter(Boolean).length / 25) * 100}%`,
               }}
