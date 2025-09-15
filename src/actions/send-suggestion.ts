@@ -21,6 +21,6 @@ export async function sendSuggestion(suggestion: string) {
       throw new Error(`Failed to send webhook: ${res.statusText}`);
     }
   } catch (error) {
-    console.error('Error sending suggestion to Discord:', error);
+    console.error('Error sending suggestion:', error);
   }
 }
