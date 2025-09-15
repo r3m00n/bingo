@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { Loader2, Plus, Sparkles } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toPng } from 'html-to-image';
+import { Loader2, Plus, Share2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { sendSuggestion } from '@/actions/send-suggestion';
@@ -67,6 +68,8 @@ interface BingoState {
 }
 
 export default function ParkBingo() {
+  const imageAreaRef = useRef<HTMLDivElement>(null);
+
   const [bingoState, setBingoState] = useState<BingoState>({
     grid: [],
     checked: Array(25).fill(false),
@@ -239,6 +242,36 @@ export default function ParkBingo() {
     localStorage.setItem('park-bingo', JSON.stringify(newState));
   };
 
+  const handleShare = async () => {
+    if (!imageAreaRef.current) return;
+
+    try {
+      const dataUrl = await toPng(imageAreaRef.current, { cacheBust: true });
+
+      // Turn base64 into a File so Web Share API can use it
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const file = new File([blob], `bingo-${bingoState.date}.png`, {
+        type: 'image/png',
+      });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: '(Hammer) Park Bingo',
+          text: `Mein Fortschritt vom ${formattedDate}`,
+        });
+      } else {
+        // fallback: copy image to clipboard
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        toast.success('Screenshot in die Zwischenablage kopiert 📋');
+      }
+    } catch (err) {
+      console.error('Screenshot share failed', err);
+      toast.error('Screenshot konnte nicht geteilt werden.');
+    }
+  };
+
   // Get cell classes for styling
   const getCellClasses = (index: number) => {
     const isChecked = bingoState.checked[index];
@@ -261,131 +294,150 @@ export default function ParkBingo() {
   const hasCelebratingLines = celebratingLines.size > 0;
 
   return (
-    <div className='bg-background min-h-screen p-4'>
+    <div className='bg-background min-h-screen pb-4'>
       <div className='mx-auto max-w-md'>
-        {/* Header */}
-        <div className='mb-6 text-center'>
-          <h1 className='text-foreground mb-2 text-3xl font-bold'>(Hammer) Park Bingo</h1>
-          <p className='text-muted-foreground'>Spiel vom {formattedDate}</p>
-          {bingoState.completedLines.length > 0 && (
-            <div className='text-primary mt-2 flex items-center justify-center gap-1'>
-              <Sparkles className='h-4 w-4' />
-              <span className='text-sm font-medium'>
-                {bingoState.completedLines.length} Bingo
-                {bingoState.completedLines.length > 1 ? 's' : ''}!
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Bingo Grid */}
-        <div
-          className={`mb-6 grid grid-cols-5 gap-2 transition-all duration-500 ${
-            hasCelebratingLines ? 'scale-105 animate-pulse shadow-2xl' : ''
-          }`}
-        >
-          {bingoState.grid.map((item, index) => (
-            <button
-              key={index}
-              onClick={() => toggleCell(index)}
-              className={getCellClasses(index)}
-              aria-label={`${item} - ${
-                bingoState.checked[index] ? 'abgeschlossen' : 'nicht abgeschlossen'
-              }`}
-            >
-              <span className='leading-tight text-balance break-words hyphens-auto'>
-                {item}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        {/* Suggest Button */}
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Button variant='outline' className='w-full bg-transparent' size='lg'>
-              <Plus className='mr-2 h-4 w-4' />
-              Neues Feld vorschlagen
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Schlage ein neues Feld vor</DialogTitle>
-            </DialogHeader>
-            <form
-              onSubmit={async e => {
-                e.preventDefault();
-                if (!suggestion.trim()) return;
-
-                setIsLoading(true);
-                try {
-                  await handleSuggestion(); // assume this is async
-                  setIsModalOpen(false);
-                } finally {
-                  setIsLoading(false);
-                }
-              }}
-              className='space-y-4'
-            >
-              <div>
-                <Input
-                  placeholder="Feld Inhalt (z.B. 'Flugzeug')"
-                  value={suggestion}
-                  onChange={e => setSuggestion(e.target.value)}
-                  maxLength={50}
-                  disabled={isLoading}
-                />
+        <div ref={imageAreaRef} className='bg-background p-4'>
+          {/* Header */}
+          <div className='mb-3 text-center'>
+            <h1 className='text-foreground mb-2 text-3xl font-bold'>
+              (Hammer) Park Bingo
+            </h1>
+            <p className='text-muted-foreground'>Spiel vom {formattedDate}</p>
+            {bingoState.completedLines.length > 0 && (
+              <div className='text-primary mt-2 flex items-center justify-center gap-1'>
+                <Sparkles className='h-4 w-4' />
+                <span className='text-sm font-medium'>
+                  {bingoState.completedLines.length} Bingo
+                  {bingoState.completedLines.length > 1 ? 's' : ''}!
+                </span>
               </div>
-              <div className='flex gap-2'>
-                <Button
-                  variant='outline'
-                  type='button'
-                  onClick={() => setIsModalOpen(false)}
-                  disabled={isLoading}
-                  className='flex-1'
-                >
-                  Abbrechen
-                </Button>
-                <Button
-                  type='submit'
-                  disabled={!suggestion.trim() || isLoading}
-                  className='flex-1'
-                >
-                  {isLoading ? <Loader2 className='mr-2 h-4 w-4 animate-spin' /> : null}
-                  {isLoading ? 'Senden...' : 'Senden'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* Reset Button */}
-        <Button
-          variant='outline'
-          className={`mt-3 w-full transition-all duration-200 ${
-            bingoState.checked.every(checked => !checked)
-              ? 'cursor-not-allowed border-red-200 text-red-300 hover:border-red-200 hover:text-red-300'
-              : 'border-red-500 text-red-500 hover:border-red-600 hover:bg-red-50 hover:text-red-600'
-          }`}
-          size='lg'
-          onClick={handleReset}
-          disabled={bingoState.checked.every(checked => !checked)}
-        >
-          Zurücksetzen
-        </Button>
-
-        {/* Progress indicator */}
-        <div className='mt-6 text-center'>
-          <div className='text-muted-foreground text-sm'>
-            Fortschritt: {bingoState.checked.filter(Boolean).length}/25 abgeschlossen
+            )}
           </div>
-          <div className='bg-muted mt-2 h-2 w-full rounded-full'>
-            <div
-              className='bg-primary h-2 rounded-full transition-all duration-500'
-              style={{
-                width: `${(bingoState.checked.filter(Boolean).length / 25) * 100}%`,
-              }}
-            />
+
+          {/* Bingo Grid */}
+          <div
+            className={`mb-3 grid grid-cols-5 gap-2 transition-all duration-500 ${
+              hasCelebratingLines ? 'scale-105 animate-pulse shadow-2xl' : ''
+            }`}
+          >
+            {bingoState.grid.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => toggleCell(index)}
+                className={getCellClasses(index)}
+                aria-label={`${item} - ${
+                  bingoState.checked[index] ? 'abgeschlossen' : 'nicht abgeschlossen'
+                }`}
+              >
+                <span className='leading-tight text-balance break-words hyphens-auto'>
+                  {item}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Progress indicator */}
+          <div className='text-center'>
+            <div className='text-muted-foreground text-sm'>
+              Fortschritt: {bingoState.checked.filter(Boolean).length}/25 abgeschlossen
+            </div>
+            <div className='bg-muted mt-2 h-2 w-full rounded-full'>
+              <div
+                className='bg-primary h-2 rounded-full transition-all duration-500'
+                style={{
+                  width: `${(bingoState.checked.filter(Boolean).length / 25) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className='-mt-1 px-4'>
+          {/* Suggest Button */}
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogTrigger asChild>
+              <Button variant='outline' className='w-full bg-transparent' size='lg'>
+                <Plus className='mr-2 h-4 w-4' />
+                Neues Feld vorschlagen
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Schlage ein neues Feld vor</DialogTitle>
+              </DialogHeader>
+              <form
+                onSubmit={async e => {
+                  e.preventDefault();
+                  if (!suggestion.trim()) return;
+
+                  setIsLoading(true);
+                  try {
+                    await handleSuggestion(); // assume this is async
+                    setIsModalOpen(false);
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
+                className='space-y-4'
+              >
+                <div>
+                  <Input
+                    placeholder="Feld Inhalt (z.B. 'Flugzeug')"
+                    value={suggestion}
+                    onChange={e => setSuggestion(e.target.value)}
+                    maxLength={50}
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className='flex gap-2'>
+                  <Button
+                    variant='outline'
+                    type='button'
+                    onClick={() => setIsModalOpen(false)}
+                    disabled={isLoading}
+                    className='flex-1'
+                  >
+                    Abbrechen
+                  </Button>
+                  <Button
+                    type='submit'
+                    disabled={!suggestion.trim() || isLoading}
+                    className='flex-1'
+                  >
+                    {isLoading ? <Loader2 className='mr-2 h-4 w-4 animate-spin' /> : null}
+                    {isLoading ? 'Senden...' : 'Senden'}
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          <div className='mt-3 flex gap-3'>
+            {/* Reset Button */}
+            <Button
+              variant='outline'
+              className={`flex-1 transition-all duration-200 ${
+                bingoState.checked.every(checked => !checked)
+                  ? 'cursor-not-allowed border-red-200 text-red-300 hover:border-red-200 hover:text-red-300'
+                  : 'border-red-500 text-red-500 hover:border-red-600 hover:bg-red-50 hover:text-red-600'
+              }`}
+              size='lg'
+              onClick={handleReset}
+              disabled={bingoState.checked.every(checked => !checked)}
+            >
+              Zurücksetzen
+            </Button>
+
+            {/* Share Button */}
+            <Button
+              variant='outline'
+              className='border-primary text-primary hover:border-primary/80 hover:bg-primary/10 hover:text-primary flex-1 bg-transparent'
+              size='lg'
+              onClick={handleShare}
+            >
+              <Share2 className='mr-2 h-4 w-4' />
+              Teilen
+            </Button>
           </div>
         </div>
       </div>
