@@ -281,7 +281,7 @@ export default function ParkBingo() {
               Neues Feld vorschlagen
             </Button>
           </DialogTrigger>
-          <DialogContent className='mx-4'>
+          <DialogContent>
             <DialogHeader>
               <DialogTitle>Schlage ein neues Feld vor</DialogTitle>
             </DialogHeader>
