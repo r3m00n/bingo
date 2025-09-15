@@ -25,32 +25,33 @@ const BINGO_ITEMS = [
   'Hund',
   'Taube',
   'Baby',
-  'Kind',
   'Senior',
   'Läufer',
   'Radfahrer',
   'Rollstuhlfahrer',
   'Picknick',
   'Vikinger Schach',
-  'Kopfhörer',
+  'Over-Ears',
   'Grill',
   'Doppel-Kinderwagen',
   'Rollerfahrer',
   'Möwe',
   'Rabe',
   'Amsel',
-  'Eule',
-  'Drache',
-  'Frisbee',
-  'Badminton',
   'Campingstuhl',
   'Buch',
   'Flugzeug',
-  'Hängematte',
   'Schachspieler',
   'Händchenhalter',
   'Banksitzer',
   'Fotograf',
+  'Fußballspieler',
+  'Tischtennisspieler',
+  'Minigolfer',
+  'Regenbogen',
+  // 'Frisbee',
+  // 'Badminton',
+  // 'Hängematte',
 ];
 
 interface BingoState {
@@ -85,12 +86,27 @@ export default function ParkBingo() {
 
   // Generate consistent daily grid based on date
   const generateDailyGrid = useCallback((date: string): string[] => {
-    const seed = date.split('-').reduce((acc, val) => acc + Number.parseInt(val), 0);
+    // date is in "YYYY-MM-DD" format
+    const numericDate = Number(date.replaceAll('-', '')); // e.g. 20250102
+
+    // Simple seeded PRNG (Mulberry32)
+    function mulberry32(a: number): () => number {
+      return function () {
+        a |= 0;
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    const random = mulberry32(numericDate);
+
     const shuffled = [...BINGO_ITEMS];
 
-    // Simple seeded shuffle
+    // Fisher-Yates shuffle using seeded RNG
     for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor((((seed * (i + 1)) % 1000) / 1000) * (i + 1));
+      const j = Math.floor(random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
@@ -200,12 +216,18 @@ export default function ParkBingo() {
     }
   };
 
-  // Handle reset function to clear all checked cells
+  // Completely reset localStorage and local state
   const handleReset = () => {
-    const newState = {
-      ...bingoState,
+    localStorage.removeItem('park-bingo'); // remove stored data
+
+    const today = new Date().toISOString().split('T')[0];
+    const newGrid = generateDailyGrid(today);
+
+    const newState: BingoState = {
+      grid: newGrid,
       checked: Array(25).fill(false),
       completedLines: [],
+      date: today,
     };
 
     setBingoState(newState);
