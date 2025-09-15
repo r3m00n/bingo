@@ -33,7 +33,7 @@ const BINGO_ITEMS = [
   'Vikinger Schach',
   'Over-Ears',
   'Grill',
-  'Doppel-Kinderwagen',
+  '2er-Kinderwagen',
   'Rollerfahrer',
   'Möwe',
   'Rabe',
