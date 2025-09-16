@@ -356,7 +356,11 @@ export default function ParkBingo() {
           {/* Suggest Button */}
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogTrigger asChild>
-              <Button variant='outline' className='w-full bg-transparent' size='lg'>
+              <Button
+                variant='outline'
+                className='dark:hover:bg-primary dark:hover:text-background w-full'
+                size='lg'
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Neues Feld vorschlagen
               </Button>
