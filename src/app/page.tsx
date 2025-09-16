@@ -259,7 +259,7 @@ export default function ParkBingo() {
         await navigator.share({
           files: [file],
           title: '(Hammer) Park Bingo',
-          text: `Mein Fortschritt vom ${formattedDate} 🌳\n\nSchaffst du mehr als ich?\nhttps://bingo.merlin.hamburg 🔥`,
+          text: `Mein Fortschritt beim (Hammer) Park Bingo von heute 🌳\n\nSchaffst du mehr als ich? 🤨\nhttps://bingo.merlin.hamburg`,
         });
       } else {
         // fallback: copy image to clipboard
