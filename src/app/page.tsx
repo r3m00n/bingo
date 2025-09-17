@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
-import { Loader2, Plus, Share2, Sparkles } from 'lucide-react';
+import { Loader2, Plus, RotateCcw, Share2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { sendSuggestion } from '@/actions/send-suggestion';
@@ -429,6 +429,7 @@ export default function ParkBingo() {
               onClick={handleReset}
               disabled={bingoState.checked.every(checked => !checked)}
             >
+              <RotateCcw className='mr-2 h-4 w-4' />
               Zurücksetzen
             </Button>
 
