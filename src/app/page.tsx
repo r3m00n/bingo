@@ -34,6 +34,7 @@ const BINGO_ITEMS = [
   'Banksitzer',
   'Fotograf',
   'Händchenhalter',
+  'Schwangere',
   'Senior',
   // Sport
   'Badminton',
@@ -255,11 +256,24 @@ export default function ParkBingo() {
         type: 'image/png',
       });
 
+      const checkedCount = bingoState.checked.filter(Boolean).length;
+      const bingoCount = bingoState.completedLines.length;
+      let shareText = '';
+      if (checkedCount === 0) {
+        shareText = `Wie viele Felder schaffst du beim heutigen #HammerParkBingo? 🤔 https://bingo.merlin.hamburg`;
+      } else if (checkedCount === 25) {
+        shareText = `Unglaublich! Alle 25 Felder im #HammerParkBingo erledigt - entweder pures Glück oder ein bisschen geschummelt 😜\n\nWie viele schaffst du? https://bingo.merlin.hamburg`;
+      } else if (bingoCount > 0) {
+        shareText = `Ich habe beim heutigen #HammerParkBingo ${checkedCount}/25 Feldern und sogar ${bingoCount} Bingo${bingoCount > 1 ? 's' : ''} erreicht. 🌳\n\nWie viele schaffst du? https://bingo.merlin.hamburg`;
+      } else {
+        shareText = `Ich habe beim heutigen #HammerParkBingo ${checkedCount}/25 Feldern erreicht. 🌳\n\nWie viele schaffst du? https://bingo.merlin.hamburg`;
+      }
+
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: '(Hammer) Park Bingo',
-          text: `Mein Fortschritt beim (Hammer) Park Bingo von heute 🌳\n\nSchaffst du mehr als ich? 🤨\nhttps://bingo.merlin.hamburg`,
+          title: `(Hammer) Park Bingo vom ${formattedDate}`,
+          text: shareText,
         });
       } else {
         // fallback: copy image to clipboard
