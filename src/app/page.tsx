@@ -5,6 +5,7 @@ import { toPng } from 'html-to-image';
 import { Loader2, Plus, RotateCcw, Share2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { getBingoItems } from '@/lib/bingo-items';
 import { sendSuggestion } from '@/actions/send-suggestion';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,50 +17,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 
-const BINGO_ITEMS = [
-  // Animals
-  'Amsel',
-  'Blesshuhn',
-  'Eichhörnchen',
-  'Ente',
-  'Fisch',
-  'Graureiher',
-  'Hund',
-  'Möwe',
-  'Rabe',
-  'Ratte',
-  'Taube',
-  // People
-  'Baby',
-  'Banksitzer',
-  'Fotograf',
-  'Händchenhalter',
-  'Schwangere',
-  'Senior',
-  // Sport
-  'Badminton',
-  'Frisbee',
-  'Fußballspieler',
-  'Minigolfer',
-  'Läufer',
-  'Radfahrer',
-  'Rollerfahrer',
-  'Schachspieler',
-  'Spikeball',
-  'Tischtennisspieler',
-  // Things
-  '2er-Kinderwagen',
-  'Buch',
-  'Campingstuhl',
-  'Flugzeug',
-  'Grill',
-  'Hubschrauber',
-  'Over-Ears',
-  'Picknick',
-  'Regenbogen',
-  'Rollstuhl',
-  'Wikinger Schach',
-];
+const BINGO_ITEMS = getBingoItems();
 
 interface BingoState {
   grid: string[];

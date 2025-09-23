@@ -1,0 +1,63 @@
+const universal = [
+  // Animals
+  'Amsel',
+  'Blesshuhn',
+  'Ente',
+  'Fisch',
+  'Graureiher',
+  'Hund',
+  'Möwe',
+  'Rabe',
+  'Ratte',
+  'Taube',
+  // People
+  'Baby',
+  'Banksitzer',
+  'Fotograf',
+  'Händchenhalter',
+  'Schwangere',
+  'Senior',
+  // Sport
+  'Fußballspieler',
+  'Minigolfer',
+  'Läufer',
+  'Radfahrer',
+  'Rollerfahrer',
+  'Tischtennisspieler',
+  // Things
+  '2er-Kinderwagen',
+  'Buch',
+  'Flugzeug',
+  'Hubschrauber',
+  'Over-Ears',
+  'Rollstuhl',
+];
+const spring: string[] = ['Biene'];
+const summer: string[] = [
+  'Eichhörnchen',
+  'Badminton',
+  'Frisbee',
+  'Spikeball',
+  'Campingstuhl',
+  'Grill',
+  'Picknick',
+  'Regenbogen',
+  'Schachspieler',
+  'Schmetterling',
+  'Wikinger Schach',
+];
+const autumn: string[] = ['Kastanie', 'Pilz', 'Regenschirm', 'Fallendes Blatt'];
+const winter: string[] = ['Mütze, Handschuhe', 'Schneeflocke', 'Schneemann'];
+
+function getSeason(): 'spring' | 'summer' | 'autumn' | 'winter' {
+  const month = new Date().getMonth() + 1;
+  if (month >= 3 && month <= 5) return 'spring';
+  if (month >= 6 && month <= 8) return 'summer';
+  if (month >= 9 && month <= 11) return 'autumn';
+  return 'winter';
+}
+
+export function getBingoItems(): string[] {
+  const seasonMap = { spring, summer, autumn, winter };
+  return [...universal, ...seasonMap[getSeason()]];
+}
