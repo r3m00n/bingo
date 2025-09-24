@@ -14,9 +14,12 @@ const universal = [
   'Baby',
   'Banksitzer',
   'Fotograf',
+  'Glatze',
   'Händchenhalter',
+  'Raucher',
   'Schwangere',
   'Senior',
+  'Telefonierer',
   // Sport
   'Fußballspieler',
   'Minigolfer',
@@ -28,9 +31,11 @@ const universal = [
   '2er-Kinderwagen',
   'Buch',
   'Flugzeug',
+  'Helm',
   'Hubschrauber',
   'Over-Ears',
   'Rollstuhl',
+  'Rucksack',
 ];
 const spring: string[] = ['Biene'];
 const summer: string[] = [
@@ -44,6 +49,7 @@ const summer: string[] = [
   'Regenbogen',
   'Schachspieler',
   'Schmetterling',
+  'Wespe',
   'Wikinger Schach',
 ];
 const autumn: string[] = ['Kastanie', 'Pilz', 'Regenschirm', 'Fallendes Blatt'];
