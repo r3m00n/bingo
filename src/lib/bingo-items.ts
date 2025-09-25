@@ -6,7 +6,6 @@ const universal = [
   'Fisch',
   'Graureiher',
   'Hund',
-  'Möwe',
   'Rabe',
   'Ratte',
   'Taube',
@@ -17,7 +16,9 @@ const universal = [
   'Glatze',
   'Händchenhalter',
   'Raucher',
+  'Schaukler',
   'Schwangere',
+  'Selbe Person erneut',
   'Senior',
   'Telefonierer',
   // Sport
