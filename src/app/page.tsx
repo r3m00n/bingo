@@ -31,7 +31,9 @@ export default function ParkBingo() {
 
   const [bingoState, setBingoState] = useState<BingoState>({
     grid: [],
-    checked: Array(25).fill(false),
+    checked: Array(25)
+      .fill(false)
+      .map((_, i) => i === 12), // center = true
     completedLines: [],
     date: '',
   });
@@ -77,7 +79,12 @@ export default function ParkBingo() {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
-    return shuffled.slice(0, 25);
+    const grid = shuffled.slice(0, 25);
+
+    // Force the middle item
+    grid[12] = 'Park Bingo';
+
+    return grid;
   }, []);
 
   // Check for bingo lines
@@ -126,7 +133,9 @@ export default function ParkBingo() {
     const newGrid = generateDailyGrid(today);
     const newState = {
       grid: newGrid,
-      checked: Array(25).fill(false),
+      checked: Array(25)
+        .fill(false)
+        .map((_, i) => i === 12), // center = true
       completedLines: [],
       date: today,
     };
@@ -137,6 +146,8 @@ export default function ParkBingo() {
 
   // Handle cell toggle
   const toggleCell = (index: number) => {
+    if (index === 12) return; // prevent toggling center
+
     const newChecked = [...bingoState.checked];
     newChecked[index] = !newChecked[index];
 
@@ -192,7 +203,9 @@ export default function ParkBingo() {
 
     const newState: BingoState = {
       grid: newGrid,
-      checked: Array(25).fill(false),
+      checked: Array(25)
+        .fill(false)
+        .map((_, i) => i === 12), // center = true
       completedLines: [],
       date: today,
     };
@@ -248,17 +261,23 @@ export default function ParkBingo() {
   const getCellClasses = (index: number) => {
     const isChecked = bingoState.checked[index];
     const isAnimating = animatingCells.has(index);
+    const isCenter = index === 12;
 
     return `
       aspect-square flex items-center justify-center p-1.5 rounded-lg border-2 
-      transition-all duration-300 cursor-pointer select-none text-center text-xs font-medium
+      transition-all duration-300 ${isCenter ? '' : 'cursor-pointer'} select-none text-center text-xs font-medium
       ${
         isChecked
           ? 'bg-primary text-primary-foreground border-primary shadow-lg'
           : 'bg-card text-card-foreground border-border hover:border-accent hover:bg-accent/10'
       }
-      ${isAnimating ? 'animate-pulse scale-105' : 'hover:scale-105'}
-      active:scale-95
+      ${
+        isAnimating
+          ? 'animate-pulse scale-105'
+          : !isCenter
+            ? 'hover:scale-105 active:scale-95'
+            : ''
+      }
     `;
   };
 
@@ -296,6 +315,7 @@ export default function ParkBingo() {
               <button
                 key={index}
                 onClick={() => toggleCell(index)}
+                disabled={index === 12} // prevent click on center
                 className={getCellClasses(index)}
                 aria-label={`${item} - ${
                   bingoState.checked[index] ? 'abgeschlossen' : 'nicht abgeschlossen'
