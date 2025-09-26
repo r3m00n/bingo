@@ -230,7 +230,7 @@ export default function ParkBingo() {
       const checkedCount = bingoState.checked.filter(Boolean).length;
       const bingoCount = bingoState.completedLines.length;
       let shareText = '';
-      if (checkedCount === 0) {
+      if (checkedCount < 2) {
         shareText = `Wie viele Felder schaffst du beim heutigen #HammerParkBingo? 🤔 https://bingo.merlin.hamburg`;
       } else if (checkedCount === 25) {
         shareText = `Unglaublich! Alle 25 Felder im #HammerParkBingo erledigt - entweder pures Glück oder ein bisschen geschummelt 😜\n\nWie viele schaffst du? https://bingo.merlin.hamburg`;
