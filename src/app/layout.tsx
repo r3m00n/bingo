@@ -52,6 +52,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='de' suppressHydrationWarning>
+      <head>
+        <meta name='apple-mobile-web-app-title' content='Park Bingo' />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider
           attribute='class'
