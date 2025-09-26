@@ -31,7 +31,7 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Park Bingo Preview',
+        alt: 'Park Bingo by R3m00n',
       },
     ],
     locale: 'de_DE',
