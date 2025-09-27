@@ -413,7 +413,7 @@ export default function ParkBingo() {
             <Button
               variant='outline'
               className={`flex-1 transition-all duration-200 ${
-                bingoState.checked.every(checked => !checked)
+                bingoState.checked.filter(Boolean).length < 2
                   ? 'cursor-not-allowed border-red-200 text-red-300 hover:border-red-200 hover:text-red-300'
                   : 'border-red-500 text-red-500 hover:border-red-600 hover:bg-red-50 hover:text-red-600'
               }`}
