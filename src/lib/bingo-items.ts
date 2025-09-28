@@ -4,6 +4,7 @@ const universal = [
   'Blesshuhn',
   'Ente',
   'Fisch',
+  'Getränk',
   'Graureiher',
   'Hund',
   'Rabe',
@@ -21,6 +22,7 @@ const universal = [
   'Selbe Person erneut',
   'Senior',
   'Telefonierer',
+  'Zopf',
   // Sport
   'Fußballspieler',
   'Minigolfer',
@@ -53,7 +55,7 @@ const summer: string[] = [
   'Wespe',
   'Wikinger Schach',
 ];
-const autumn: string[] = ['Kastanie', 'Pilz', 'Regenschirm', 'Fallendes Blatt'];
+const autumn: string[] = ['Kastanie', 'Regenschirm', 'Fallendes Blatt'];
 const winter: string[] = ['Mütze, Handschuhe', 'Schneeflocke', 'Schneemann'];
 
 function getSeason(): 'spring' | 'summer' | 'autumn' | 'winter' {
