@@ -30,7 +30,7 @@ const universal = [
   'Tischtennisspieler',
   // Things
   '2er-Kinderwagen',
-  'Babytrage',
+  'Baby-trage',
   'Brille',
   'Buch',
   'Flugzeug',
