@@ -10,6 +10,7 @@ const universal = [
   'Taube',
   // People
   'Banksitzer',
+  'Bart',
   'Fotograf',
   'Glatze',
   'Händchenhalter',
@@ -30,12 +31,15 @@ const universal = [
   // Things
   '2er-Kinderwagen',
   'Babytrage',
+  'Brille',
   'Buch',
   'Flugzeug',
   'Getränk',
   'Helm',
+  'Hut/ Mütze/ Cap',
   'Hubschrauber',
   'Over-Ears',
+  'Rollator',
   'Rollstuhl',
   'Rucksack',
 ];
