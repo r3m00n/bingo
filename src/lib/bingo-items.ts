@@ -34,6 +34,7 @@ const universal = [
   'Brille',
   'Buch',
   'Flugzeug',
+  'Gehstock',
   'Getränk',
   'Helm',
   'Hut/ Mütze/ Cap',
